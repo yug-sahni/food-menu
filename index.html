@@ -69,6 +69,7 @@
     <input type="text" id="dish" placeholder="Enter dish">
     <button onclick="addDish()">Add Dish</button>
     <button onclick="generateExcel()">Generate Excel</button>
+    <button onclick="generatePDF()">Generate PDF</button>
 
     <div id="message"></div>
 
@@ -88,6 +89,8 @@
     </table>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
     <script>
         const mealPlan = {
             Monday: { Breakfast: '', Lunch: '', Dinner: '' },
@@ -193,6 +196,37 @@
             XLSX.utils.book_append_sheet(workbook, worksheet, 'Meal Plan');
 
             XLSX.writeFile(workbook, 'meal_plan.xlsx');
+        }
+
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const startDate = new Date(document.getElementById('start-date').value);
+            const endDate = new Date(document.getElementById('end-date').value);
+            let currentDate = new Date(startDate);
+
+            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            let data = [['Date', 'Day', 'Breakfast', 'Lunch', 'Dinner']];
+
+            while (currentDate <= endDate) {
+                const dayName = dayNames[currentDate.getDay()];
+                const formattedDate = formatDate(currentDate);
+                data.push([
+                    formattedDate,
+                    dayName,
+                    mealPlan[dayName].Breakfast,
+                    mealPlan[dayName].Lunch,
+                    mealPlan[dayName].Dinner
+                ]);
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+
+            doc.autoTable({
+                head: [data[0]],
+                body: data.slice(1),
+            });
+
+            doc.save('meal_plan.pdf');
         }
 
         // Initial table update
