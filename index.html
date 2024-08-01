@@ -30,6 +30,18 @@
             padding: 10px;
             color: green;
         }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
@@ -56,6 +68,61 @@
 
     <div id="message"></div>
 
+    <table id="mealTable">
+        <thead>
+            <tr>
+                <th>Day</th>
+                <th>Breakfast</th>
+                <th>Lunch</th>
+                <th>Dinner</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Monday</td>
+                <td id="Monday-Breakfast"></td>
+                <td id="Monday-Lunch"></td>
+                <td id="Monday-Dinner"></td>
+            </tr>
+            <tr>
+                <td>Tuesday</td>
+                <td id="Tuesday-Breakfast"></td>
+                <td id="Tuesday-Lunch"></td>
+                <td id="Tuesday-Dinner"></td>
+            </tr>
+            <tr>
+                <td>Wednesday</td>
+                <td id="Wednesday-Breakfast"></td>
+                <td id="Wednesday-Lunch"></td>
+                <td id="Wednesday-Dinner"></td>
+            </tr>
+            <tr>
+                <td>Thursday</td>
+                <td id="Thursday-Breakfast"></td>
+                <td id="Thursday-Lunch"></td>
+                <td id="Thursday-Dinner"></td>
+            </tr>
+            <tr>
+                <td>Friday</td>
+                <td id="Friday-Breakfast"></td>
+                <td id="Friday-Lunch"></td>
+                <td id="Friday-Dinner"></td>
+            </tr>
+            <tr>
+                <td>Saturday</td>
+                <td id="Saturday-Breakfast"></td>
+                <td id="Saturday-Lunch"></td>
+                <td id="Saturday-Dinner"></td>
+            </tr>
+            <tr>
+                <td>Sunday</td>
+                <td id="Sunday-Breakfast"></td>
+                <td id="Sunday-Lunch"></td>
+                <td id="Sunday-Dinner"></td>
+            </tr>
+        </tbody>
+    </table>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
     <script>
         const mealPlan = {
@@ -79,9 +146,18 @@
                 message.textContent = 'Dish added successfully!';
                 message.style.color = 'green';
                 document.getElementById('dish').value = '';
+                updateTable();
             } else {
                 message.textContent = 'Please select a day and meal, and enter a dish.';
                 message.style.color = 'red';
+            }
+        }
+
+        function updateTable() {
+            for (const day in mealPlan) {
+                for (const meal in mealPlan[day]) {
+                    document.getElementById(`${day}-${meal}`).textContent = mealPlan[day][meal];
+                }
             }
         }
 
@@ -102,6 +178,9 @@
 
             XLSX.writeFile(workbook, 'meal_plan.xlsx');
         }
+
+        // Initial table update
+        updateTable();
     </script>
 </body>
 </html>
