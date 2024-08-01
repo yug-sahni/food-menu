@@ -133,6 +133,13 @@
             }
         }
 
+        function formatDate(date) {
+            const day = ('0' + date.getDate()).slice(-2);
+            const month = ('0' + (date.getMonth() + 1)).slice(-2);
+            const year = date.getFullYear();
+            return `${day}-${month}-${year}`;
+        }
+
         function updateTable() {
             const startDate = new Date(document.getElementById('start-date').value);
             const endDate = new Date(document.getElementById('end-date').value);
@@ -145,7 +152,7 @@
 
             while (currentDate <= endDate) {
                 const dayName = dayNames[currentDate.getDay()];
-                const formattedDate = currentDate.toISOString().split('T')[0];
+                const formattedDate = formatDate(currentDate);
 
                 const row = `<tr>
                     <td>${formattedDate}</td>
@@ -170,7 +177,7 @@
 
             while (currentDate <= endDate) {
                 const dayName = dayNames[currentDate.getDay()];
-                const formattedDate = currentDate.toISOString().split('T')[0];
+                const formattedDate = formatDate(currentDate);
                 data.push([
                     formattedDate,
                     dayName,
