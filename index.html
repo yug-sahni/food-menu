@@ -104,6 +104,9 @@
             Sunday: { Breakfast: '', Lunch: '', Dinner: '' }
         };
 
+        const dayOrder = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        const mealOrder = ['Breakfast', 'Lunch', 'Dinner'];
+
         document.addEventListener('DOMContentLoaded', () => {
             const currentDate = new Date();
             let startDate = new Date(currentDate);
@@ -121,8 +124,10 @@
         document.getElementById('end-date').addEventListener('change', updateTable);
 
         function addDish() {
-            const day = document.getElementById('day').value;
-            const meal = document.getElementById('meal').value;
+            const daySelect = document.getElementById('day');
+            const mealSelect = document.getElementById('meal');
+            const day = daySelect.value;
+            const meal = mealSelect.value;
             const dish = document.getElementById('dish').value;
             const message = document.getElementById('message');
 
@@ -132,6 +137,18 @@
                 message.style.color = 'green';
                 document.getElementById('dish').value = '';
                 updateTable();
+
+                // Update the meal and day selections
+                let nextMealIndex = (mealOrder.indexOf(meal) + 1) % mealOrder.length;
+                let nextDayIndex = dayOrder.indexOf(day);
+
+                if (nextMealIndex === 0) {
+                    // If we've cycled through all meals, move to the next day
+                    nextDayIndex = (nextDayIndex + 1) % dayOrder.length;
+                }
+
+                mealSelect.value = mealOrder[nextMealIndex];
+                daySelect.value = dayOrder[nextDayIndex];
             } else {
                 message.textContent = 'Please select a day and meal, and enter a dish.';
                 message.style.color = 'red';
