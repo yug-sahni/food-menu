@@ -46,6 +46,10 @@
 </head>
 <body>
     <h1>Meal Planner</h1>
+    <label for="start-date">Start Date:</label>
+    <input type="date" id="start-date">
+    <label for="end-date">End Date:</label>
+    <input type="date" id="end-date">
     <select id="day">
         <option value="">Select Day</option>
         <option value="Monday">Monday</option>
@@ -71,55 +75,15 @@
     <table id="mealTable">
         <thead>
             <tr>
+                <th>Date</th>
                 <th>Day</th>
                 <th>Breakfast</th>
                 <th>Lunch</th>
                 <th>Dinner</th>
             </tr>
         </thead>
-        <tbody>
-            <tr>
-                <td>Monday</td>
-                <td id="Monday-Breakfast"></td>
-                <td id="Monday-Lunch"></td>
-                <td id="Monday-Dinner"></td>
-            </tr>
-            <tr>
-                <td>Tuesday</td>
-                <td id="Tuesday-Breakfast"></td>
-                <td id="Tuesday-Lunch"></td>
-                <td id="Tuesday-Dinner"></td>
-            </tr>
-            <tr>
-                <td>Wednesday</td>
-                <td id="Wednesday-Breakfast"></td>
-                <td id="Wednesday-Lunch"></td>
-                <td id="Wednesday-Dinner"></td>
-            </tr>
-            <tr>
-                <td>Thursday</td>
-                <td id="Thursday-Breakfast"></td>
-                <td id="Thursday-Lunch"></td>
-                <td id="Thursday-Dinner"></td>
-            </tr>
-            <tr>
-                <td>Friday</td>
-                <td id="Friday-Breakfast"></td>
-                <td id="Friday-Lunch"></td>
-                <td id="Friday-Dinner"></td>
-            </tr>
-            <tr>
-                <td>Saturday</td>
-                <td id="Saturday-Breakfast"></td>
-                <td id="Saturday-Lunch"></td>
-                <td id="Saturday-Dinner"></td>
-            </tr>
-            <tr>
-                <td>Sunday</td>
-                <td id="Sunday-Breakfast"></td>
-                <td id="Sunday-Lunch"></td>
-                <td id="Sunday-Dinner"></td>
-            </tr>
+        <tbody id="mealTableBody">
+            <!-- Rows will be dynamically inserted here -->
         </tbody>
     </table>
 
@@ -134,6 +98,22 @@
             Saturday: { Breakfast: '', Lunch: '', Dinner: '' },
             Sunday: { Breakfast: '', Lunch: '', Dinner: '' }
         };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentDate = new Date();
+            let startDate = new Date(currentDate);
+            startDate.setDate(startDate.getDate() + ((1 + 7 - startDate.getDay()) % 7 || 7)); // Next Monday
+            let endDate = new Date(startDate);
+            endDate.setDate(endDate.getDate() + 6); // Following Sunday
+
+            document.getElementById('start-date').value = startDate.toISOString().split('T')[0];
+            document.getElementById('end-date').value = endDate.toISOString().split('T')[0];
+
+            updateTable();
+        });
+
+        document.getElementById('start-date').addEventListener('change', updateTable);
+        document.getElementById('end-date').addEventListener('change', updateTable);
 
         function addDish() {
             const day = document.getElementById('day').value;
@@ -154,25 +134,54 @@
         }
 
         function updateTable() {
-            for (const day in mealPlan) {
-                for (const meal in mealPlan[day]) {
-                    document.getElementById(`${day}-${meal}`).textContent = mealPlan[day][meal];
-                }
+            const startDate = new Date(document.getElementById('start-date').value);
+            const endDate = new Date(document.getElementById('end-date').value);
+            const tableBody = document.getElementById('mealTableBody');
+
+            tableBody.innerHTML = ''; // Clear previous rows
+
+            let currentDate = new Date(startDate);
+            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+            while (currentDate <= endDate) {
+                const dayName = dayNames[currentDate.getDay()];
+                const formattedDate = currentDate.toISOString().split('T')[0];
+
+                const row = `<tr>
+                    <td>${formattedDate}</td>
+                    <td>${dayName}</td>
+                    <td id="${dayName}-Breakfast">${mealPlan[dayName].Breakfast}</td>
+                    <td id="${dayName}-Lunch">${mealPlan[dayName].Lunch}</td>
+                    <td id="${dayName}-Dinner">${mealPlan[dayName].Dinner}</td>
+                </tr>`;
+                tableBody.insertAdjacentHTML('beforeend', row);
+
+                currentDate.setDate(currentDate.getDate() + 1);
             }
         }
 
         function generateExcel() {
-            const worksheet = XLSX.utils.aoa_to_sheet([
-                ['', 'Breakfast', 'Lunch', 'Dinner'],
-                ['Monday', mealPlan.Monday.Breakfast, mealPlan.Monday.Lunch, mealPlan.Monday.Dinner],
-                ['Tuesday', mealPlan.Tuesday.Breakfast, mealPlan.Tuesday.Lunch, mealPlan.Tuesday.Dinner],
-                ['Wednesday', mealPlan.Wednesday.Breakfast, mealPlan.Wednesday.Lunch, mealPlan.Wednesday.Dinner],
-                ['Thursday', mealPlan.Thursday.Breakfast, mealPlan.Thursday.Lunch, mealPlan.Thursday.Dinner],
-                ['Friday', mealPlan.Friday.Breakfast, mealPlan.Friday.Lunch, mealPlan.Friday.Dinner],
-                ['Saturday', mealPlan.Saturday.Breakfast, mealPlan.Saturday.Lunch, mealPlan.Saturday.Dinner],
-                ['Sunday', mealPlan.Sunday.Breakfast, mealPlan.Sunday.Lunch, mealPlan.Sunday.Dinner]
-            ]);
+            const startDate = new Date(document.getElementById('start-date').value);
+            const endDate = new Date(document.getElementById('end-date').value);
+            let currentDate = new Date(startDate);
 
+            const data = [['Date', 'Day', 'Breakfast', 'Lunch', 'Dinner']];
+            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+            while (currentDate <= endDate) {
+                const dayName = dayNames[currentDate.getDay()];
+                const formattedDate = currentDate.toISOString().split('T')[0];
+                data.push([
+                    formattedDate,
+                    dayName,
+                    mealPlan[dayName].Breakfast,
+                    mealPlan[dayName].Lunch,
+                    mealPlan[dayName].Dinner
+                ]);
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+
+            const worksheet = XLSX.utils.aoa_to_sheet(data);
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, 'Meal Plan');
 
