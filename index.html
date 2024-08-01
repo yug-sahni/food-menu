@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meal Planner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        select, input, button {
+            margin: 10px 0;
+            padding: 5px;
+            width: 100%;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Meal Planner</h1>
+    <select id="day">
+        <option value="">Select Day</option>
+        <option value="Monday">Monday</option>
+        <option value="Tuesday">Tuesday</option>
+        <option value="Wednesday">Wednesday</option>
+        <option value="Thursday">Thursday</option>
+        <option value="Friday">Friday</option>
+        <option value="Saturday">Saturday</option>
+        <option value="Sunday">Sunday</option>
+    </select>
+    <select id="meal">
+        <option value="">Select Meal</option>
+        <option value="Breakfast">Breakfast</option>
+        <option value="Lunch">Lunch</option>
+        <option value="Dinner">Dinner</option>
+    </select>
+    <input type="text" id="dish" placeholder="Enter dish">
+    <button onclick="addDish()">Add Dish</button>
+    <button onclick="generateExcel()">Generate Excel</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+    <script>
+        const mealPlan = {
+            Monday: { Breakfast: '', Lunch: '', Dinner: '' },
+            Tuesday: { Breakfast: '', Lunch: '', Dinner: '' },
+            Wednesday: { Breakfast: '', Lunch: '', Dinner: '' },
+            Thursday: { Breakfast: '', Lunch: '', Dinner: '' },
+            Friday: { Breakfast: '', Lunch: '', Dinner: '' },
+            Saturday: { Breakfast: '', Lunch: '', Dinner: '' },
+            Sunday: { Breakfast: '', Lunch: '', Dinner: '' }
+        };
+
+        function addDish() {
+            const day = document.getElementById('day').value;
+            const meal = document.getElementById('meal').value;
+            const dish = document.getElementById('dish').value;
+
+            if (day && meal && dish) {
+                mealPlan[day][meal] = dish;
+                alert('Dish added successfully!');
+                document.getElementById('dish').value = '';
+            } else {
+                alert('Please select a day and meal, and enter a dish.');
+            }
+        }
+
+        function generateExcel() {
+            const worksheet = XLSX.utils.aoa_to_sheet([
+                ['', 'Breakfast', 'Lunch', 'Dinner'],
+                ['Monday', mealPlan.Monday.Breakfast, mealPlan.Monday.Lunch, mealPlan.Monday.Dinner],
+                ['Tuesday', mealPlan.Tuesday.Breakfast, mealPlan.Tuesday.Lunch, mealPlan.Tuesday.Dinner],
+                ['Wednesday', mealPlan.Wednesday.Breakfast, mealPlan.Wednesday.Lunch, mealPlan.Wednesday.Dinner],
+                ['Thursday', mealPlan.Thursday.Breakfast, mealPlan.Thursday.Lunch, mealPlan.Thursday.Dinner],
+                ['Friday', mealPlan.Friday.Breakfast, mealPlan.Friday.Lunch, mealPlan.Friday.Dinner],
+                ['Saturday', mealPlan.Saturday.Breakfast, mealPlan.Saturday.Lunch, mealPlan.Saturday.Dinner],
+                ['Sunday', mealPlan.Sunday.Breakfast, mealPlan.Sunday.Lunch, mealPlan.Sunday.Dinner]
+            ]);
+
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Meal Plan');
+
+            XLSX.writeFile(workbook, 'meal_plan.xlsx');
+        }
+    </script>
+</body>
+</html>
