@@ -20,12 +20,27 @@
             padding: 5px;
             width: 100%;
         }
+        input[type="text"] {
+            width: calc(100% - 140px); /* Reduced size */
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+        }
         button {
             background-color: #FF4E88;
             color: white;
             border: none;
             cursor: pointer;
+            
         }
+
+        #clear-dish-button{
+            padding: 5px 10px;
+            width: 110px;
+
+        }
+
         button:hover {
             background-color: #45a049;
         }
@@ -70,7 +85,11 @@
         <option value="Lunch">Lunch</option>
         <option value="Dinner">Dinner</option>
     </select>
-    <input type="text" id="dish" placeholder="Enter dish">
+    <div class="button-container">
+        <input type="text" id="dish" placeholder="Enter dish">
+        
+        <button id="clear-dish-button" onclick="clearDish()">Clear</button>
+    </div>
     <button onclick="addDish()">Add Dish</button>
     <button onclick="generatePDF()">Generate PDF</button>
 
@@ -153,6 +172,10 @@
                 message.textContent = 'Please select a day and meal, and enter a dish.';
                 message.style.color = 'red';
             }
+        }
+
+        function clearDish() {
+            document.getElementById('dish').value = '';
         }
 
         function formatDate(date) {
