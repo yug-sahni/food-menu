@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meal Planner</title>
-    <style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Tangerine">    <style>
         body {
-            background-color: #FFDA76;
+            background-color: #FDF0F0;
             font-family: Arial, sans-serif;
             max-width: 600px;
             margin: 0 auto;
@@ -28,11 +28,16 @@
             justify-content: space-between;
         }
         button {
-            background-color: #FF4E88;
+            background-color: #132043;
             color: white;
             border: none;
             cursor: pointer;
             
+        }
+        #meal-planner-title{
+            font-family: 'Tangerine', serif;
+            font-size: 48px;
+            text-shadow: 4px 4px 4px #aaa;
         }
 
         #clear-dish-button{
@@ -64,7 +69,7 @@
     </style>
 </head>
 <body>
-    <h1>Meal Planner</h1>
+    <h1 id="meal-planner-title">Meal Planner</h1>
     <label for="start-date">Start Date:</label>
     <input type="date" id="start-date">
     <label for="end-date">End Date:</label>
