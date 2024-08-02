@@ -76,7 +76,7 @@
     <input type="date" id="start-date">
     <label for="end-date">End Date:</label>
     <input type="date" id="end-date">
-    <select id="day">
+    <select id="day" onchange="updateDishInput()">
         <option value="">Select Day</option>
         <option value="Monday">Monday</option>
         <option value="Tuesday">Tuesday</option>
@@ -86,7 +86,7 @@
         <option value="Saturday">Saturday</option>
         <option value="Sunday">Sunday</option>
     </select>
-    <select id="meal">
+    <select id="meal" onchange="updateDishInput()">
         <option value="">Select Meal</option>
         <option value="Breakfast">Breakfast</option>
         <option value="Lunch">Lunch</option>
@@ -175,6 +175,7 @@
 
                 mealSelect.value = mealOrder[nextMealIndex];
                 daySelect.value = dayOrder[nextDayIndex];
+                updateDishInput();
             } else {
                 message.textContent = 'Please select a day and meal, and enter a dish.';
                 message.style.color = 'red';
@@ -248,6 +249,18 @@
             });
 
             doc.save('meal_plan.pdf');
+        }
+
+        function updateDishInput() {
+            const day = document.getElementById('day').value;
+            const meal = document.getElementById('meal').value;
+            const dishInput = document.getElementById('dish');
+
+            if (day && meal) {
+                dishInput.value = mealPlan[day][meal] || '';
+            } else {
+                dishInput.value = '';
+            }
         }
 
         // Initial table update
